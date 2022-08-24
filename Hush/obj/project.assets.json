@@ -1,0 +1,121 @@
+{
+  "version": 3,
+  "targets": {
+    ".NETFramework,Version=v4.7.2": {
+      "CSCore/1.2.1.2": {
+        "type": "package",
+        "compile": {
+          "lib/net35-client/CSCore.dll": {}
+        },
+        "runtime": {
+          "lib/net35-client/CSCore.dll": {}
+        }
+      }
+    },
+    ".NETFramework,Version=v4.7.2/win": {
+      "CSCore/1.2.1.2": {
+        "type": "package",
+        "compile": {
+          "lib/net35-client/CSCore.dll": {}
+        },
+        "runtime": {
+          "lib/net35-client/CSCore.dll": {}
+        }
+      }
+    },
+    ".NETFramework,Version=v4.7.2/win-x64": {
+      "CSCore/1.2.1.2": {
+        "type": "package",
+        "compile": {
+          "lib/net35-client/CSCore.dll": {}
+        },
+        "runtime": {
+          "lib/net35-client/CSCore.dll": {}
+        }
+      }
+    },
+    ".NETFramework,Version=v4.7.2/win-x86": {
+      "CSCore/1.2.1.2": {
+        "type": "package",
+        "compile": {
+          "lib/net35-client/CSCore.dll": {}
+        },
+        "runtime": {
+          "lib/net35-client/CSCore.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "CSCore/1.2.1.2": {
+      "sha512": "DoQKUcdZLQawo3mOg8CvujJD9YkvTt6NtEu7S+OCo8+ySl8eCeUw4LFyL2E1OcAkPU918HZM6sUNcvIMcXWg6g==",
+      "type": "package",
+      "path": "cscore/1.2.1.2",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "cscore.1.2.1.2.nupkg.sha512",
+        "cscore.nuspec",
+        "lib/net35-client/CSCore.XML",
+        "lib/net35-client/CSCore.dll"
+      ]
+    }
+  },
+  "projectFileDependencyGroups": {
+    ".NETFramework,Version=v4.7.2": [
+      "CSCore >= 1.2.1.2"
+    ]
+  },
+  "packageFolders": {
+    "C:\\Users\\Test\\.nuget\\packages\\": {}
+  },
+  "project": {
+    "version": "1.0.0",
+    "restore": {
+      "projectUniqueName": "D:\\Documents\\Programming\\Hush\\Hush\\Hush\\Hush.csproj",
+      "projectName": "Hush",
+      "projectPath": "D:\\Documents\\Programming\\Hush\\Hush\\Hush\\Hush.csproj",
+      "packagesPath": "C:\\Users\\Test\\.nuget\\packages\\",
+      "outputPath": "D:\\Documents\\Programming\\Hush\\Hush\\Hush\\obj\\",
+      "projectStyle": "PackageReference",
+      "skipContentFileWrite": true,
+      "configFilePaths": [
+        "C:\\Users\\Test\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+      ],
+      "originalTargetFrameworks": [
+        "net472"
+      ],
+      "sources": {
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+        "https://api.nuget.org/v3/index.json": {}
+      },
+      "frameworks": {
+        "net472": {
+          "projectReferences": {}
+        }
+      }
+    },
+    "frameworks": {
+      "net472": {
+        "dependencies": {
+          "CSCore": {
+            "target": "Package",
+            "version": "[1.2.1.2, )"
+          }
+        }
+      }
+    },
+    "runtimes": {
+      "win": {
+        "#import": []
+      },
+      "win-x64": {
+        "#import": []
+      },
+      "win-x86": {
+        "#import": []
+      }
+    }
+  }
+}

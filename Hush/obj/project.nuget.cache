@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "4H9VvblJcqpQdHJ4sG+9JMSK/wyFRi9UVRyR0TnrHP3wTf76ugtD7C698KZWumiJq8GZ7pHsQ4MvSWDC1jxSRA==",
+  "success": true,
+  "projectFilePath": "D:\\Documents\\Programming\\Hush\\Hush\\Hush\\Hush.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Test\\.nuget\\packages\\cscore\\1.2.1.2\\cscore.1.2.1.2.nupkg.sha512"
+  ],
+  "logs": []
+}
