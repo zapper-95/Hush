@@ -5,38 +5,7 @@ namespace Hush
 {
     partial class Form1
     {
-        private static void Main(string[] args)
-        {
-            using (var sessionManager = GetDefaultAudioSessionManager2(DataFlow.Render))
-            {
-                using (var sessionEnumerator = sessionManager.GetSessionEnumerator())
-                {
-                    foreach (var session in sessionEnumerator)
-                    {
-                        using (var audioMeterInformation = session.QueryInterface<AudioMeterInformation>())
-                        {
-                            Console.WriteLine(audioMeterInformation.GetPeakValue());
-                        }
-                    }
-                }
-            }
 
-            Console.ReadKey();
-        }
-
-        private static AudioSessionManager2 GetDefaultAudioSessionManager2(DataFlow dataFlow)
-        {
-
-            using (MMDeviceEnumerator enumerator = new MMDeviceEnumerator())
-            {
-                using (var device = enumerator.GetDefaultAudioEndpoint(dataFlow, Role.Multimedia))
-                {
-                    Console.WriteLine("DefaultDevice: " + device.FriendlyName);
-                    var sessionManager = AudioSessionManager2.FromMMDevice(device);
-                    return sessionManager;
-                }
-            }
-        }
 
 
 
@@ -71,6 +40,8 @@ namespace Hush
             this.Target = new System.Windows.Forms.ComboBox();
             this.tg = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
+            this.Refresh = new System.Windows.Forms.Button();
+            this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // Speaker
@@ -128,12 +99,35 @@ namespace Hush
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
+            // Refresh
+            // 
+            this.Refresh.Font = new System.Drawing.Font("Bebas Neue", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Refresh.Location = new System.Drawing.Point(600, 143);
+            this.Refresh.Name = "Refresh";
+            this.Refresh.Size = new System.Drawing.Size(107, 32);
+            this.Refresh.TabIndex = 5;
+            this.Refresh.Text = "Refresh";
+            this.Refresh.UseVisualStyleBackColor = true;
+            this.Refresh.Click += new System.EventHandler(this.Refresh_Click);
+            // 
+            // checkBox1
+            // 
+            this.checkBox1.AutoSize = true;
+            this.checkBox1.Location = new System.Drawing.Point(650, 284);
+            this.checkBox1.Name = "checkBox1";
+            this.checkBox1.Size = new System.Drawing.Size(81, 17);
+            this.checkBox1.TabIndex = 6;
+            this.checkBox1.Text = "checkBox1";
+            this.checkBox1.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ControlDarkDark;
             this.ClientSize = new System.Drawing.Size(827, 397);
+            this.Controls.Add(this.checkBox1);
+            this.Controls.Add(this.Refresh);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.tg);
             this.Controls.Add(this.Target);
@@ -154,6 +148,8 @@ namespace Hush
         private System.Windows.Forms.ComboBox Target;
         private System.Windows.Forms.Label tg;
         private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button Refresh;
+        private System.Windows.Forms.CheckBox checkBox1;
     }
 }
 
