@@ -16,6 +16,7 @@ namespace Hush
         private static double threshold_noise = 0.00001;
         public static bool ProcessPlayingAudio(int pID)
         {
+            Console.WriteLine(pID);
             using (var sessionManager = GetDefaultAudioSessionManager2(DataFlow.Render))
             {
                 using (var sessionEnumerator = sessionManager.GetSessionEnumerator())
@@ -45,6 +46,40 @@ namespace Hush
 
         }
 
+        public static float GetVolume(int pID)
+        {
+            using (var sessionManager = GetDefaultAudioSessionManager2(DataFlow.Render))
+            {
+                using (var sessionEnumerator = sessionManager.GetSessionEnumerator())
+                {
+                    foreach (var session in sessionEnumerator)
+                    {
+                        using (var audioMeterInformation = session.QueryInterface<AudioMeterInformation>())
+                        {
+                            using (var session2 = session.QueryInterface<AudioSessionControl2>())
+                            {
+
+                                //Debug.WriteLine(session2.Process.ProcessName);
+                                if (pID == session2.ProcessID)
+                                {
+                                    //Debug.WriteLine(audioMeterInformation.);
+                                    using (var simpleVolume = session.QueryInterface<SimpleAudioVolume>())
+                                    {
+
+                                        float volume = simpleVolume.MasterVolume;
+                                        return volume;
+
+                                    }
+                                    
+                                }
+                            }
+                        }
+                    }
+                }
+                return 0;
+            }
+
+        }
 
 
         public static void ChangeVolume(int pID, float volume_change)
@@ -66,7 +101,20 @@ namespace Hush
                                     {
 
                                         float volume = simpleVolume.MasterVolume;
-                                        simpleVolume.MasterVolume += volume_change;
+                                        float newVolume = simpleVolume.MasterVolume + volume_change;
+                                        if (newVolume < 0)
+                                        {
+                                            simpleVolume.MasterVolume = 0;
+                                        }
+                                        else if(newVolume > 100)
+                                        {
+                                            simpleVolume.MasterVolume = 100;
+                                        }
+                                        else 
+                                        {
+                                            simpleVolume.MasterVolume = newVolume;
+                                        }
+                                        
 
                                     }
                                 }

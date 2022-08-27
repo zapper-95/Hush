@@ -41,7 +41,6 @@ namespace Hush
             this.tg = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
             this.Refresh = new System.Windows.Forms.Button();
-            this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // Speaker
@@ -110,23 +109,12 @@ namespace Hush
             this.Refresh.UseVisualStyleBackColor = true;
             this.Refresh.Click += new System.EventHandler(this.Refresh_Click);
             // 
-            // checkBox1
-            // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.Location = new System.Drawing.Point(650, 284);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(81, 17);
-            this.checkBox1.TabIndex = 6;
-            this.checkBox1.Text = "checkBox1";
-            this.checkBox1.UseVisualStyleBackColor = true;
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ControlDarkDark;
             this.ClientSize = new System.Drawing.Size(827, 397);
-            this.Controls.Add(this.checkBox1);
             this.Controls.Add(this.Refresh);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.tg);
@@ -149,7 +137,6 @@ namespace Hush
         private System.Windows.Forms.Label tg;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button Refresh;
-        private System.Windows.Forms.CheckBox checkBox1;
     }
 }
 
