@@ -23,6 +23,7 @@ namespace Hush
         private ProcessInfo SpeakerProcess;
         string SpeakerText;
         string TargetText;
+        int inertia_period = 3000;
         private List<ProcessInfo> processInfo = new List<ProcessInfo>();
         bool hush = false;
         public Form1()
@@ -36,11 +37,11 @@ namespace Hush
         {
             processInfo.Clear();
             Process[] processes = Process.GetProcesses();
-
-            foreach (var process in processes)
+            processInfo = VolumeMixer.GetProcessInfo();
+            foreach (var process in processInfo)
             {
-                Console.WriteLine("Process ID: " + process.Id + " process name "+ process.ProcessName + " process main window title " + process.MainWindowTitle);
-                processInfo.Add(new ProcessInfo(process.Id, process.MainWindowTitle));
+                Console.WriteLine("Process ID: " + process.ID + " process name " + process.name);
+                //processInfo.Add(new ProcessInfo(process.Id, process.MainWindowTitle));
             }
 
         }
@@ -80,23 +81,33 @@ namespace Hush
                     TargetID = TargetProcess.ID;
                     try
                     {
-                        Console.WriteLine(Process.GetProcessById(SpeakerID).MainWindowTitle);
-                        if (Process.GetProcessById(SpeakerID).MainWindowTitle.Contains(SpeakerText) && Process.GetProcessById(TargetID).MainWindowTitle.Contains(TargetText)) //checks that the process with that number corresponds to the text in the dropdown
+                        Console.WriteLine(Process.GetProcessById(SpeakerID).ProcessName);
+                        if (Process.GetProcessById(SpeakerID).ProcessName == SpeakerText && Process.GetProcessById(TargetID).ProcessName==TargetText) //checks that the process with that number corresponds to the text in the dropdown
                         {
                             bool speaker_noise = VolumeMixer.ProcessPlayingAudio(SpeakerID);
                             Console.WriteLine("Speaker noise " + speaker_noise);
 
                             if (speaker_noise && last_fade_state != "out")
                             {
-                                FadeOut(SpeakerID, TargetID, ref priorMasterVolume);
-                                last_fade_state = "out";
-                                Console.WriteLine("prior master volume " +priorMasterVolume);
+                                Thread.Sleep(inertia_period);
+                                if (VolumeMixer.ProcessPlayingAudio(SpeakerID))
+                                {
+                                    FadeOut(SpeakerID, TargetID, ref priorMasterVolume);
+                                    last_fade_state = "out";
+                                    Console.WriteLine("prior master volume " + priorMasterVolume);
+                                }
+
                             }
                             else if(!speaker_noise && last_fade_state != "in")
                             {
-                                FadeIn(SpeakerID, TargetID, priorMasterVolume);
-                                Console.WriteLine("prior master volume " + priorMasterVolume);
-                                last_fade_state = "in";
+                                Thread.Sleep(inertia_period);
+                                if (!VolumeMixer.ProcessPlayingAudio(SpeakerID))
+                                {
+                                    FadeIn(SpeakerID, TargetID, priorMasterVolume);
+                                    Console.WriteLine("prior master volume " + priorMasterVolume);
+                                    last_fade_state = "in";
+                                }
+
                             }
                         }
 
@@ -115,15 +126,15 @@ namespace Hush
         private void button1_Click(object sender, EventArgs e)
         {
             //code here https://stackoverflow.com/questions/20938934/controlling-applications-volume-by-process-id
-            hush = !hush;
-
+            hush = true;
+            TargetText = Target.Text;
+            SpeakerText = Speaker.Text;
+            var thread = new Thread(StartCounting);
+            thread.IsBackground = true;
+            thread.Start();
             if (hush)
             {
-                TargetText = Target.Text;
-                SpeakerText = Speaker.Text;
-                var thread = new Thread(StartCounting);
-                thread.IsBackground = true;
-                thread.Start();
+
                 //int SpeakerID = 0, TargetID = 0;
 
                 //if (SpeakerProcess != null && TargetProcess != null)
@@ -309,6 +320,7 @@ namespace Hush
 
         private void Speaker_SelectedIndexChanged(object sender, EventArgs e)
         {
+            hush = false;
             ComboBox box = (ComboBox)sender;
             if (box.Text != "")
             {
@@ -318,6 +330,7 @@ namespace Hush
 
         private void Target_SelectedIndexChanged(object sender, EventArgs e)
         {
+            hush = false;
             ComboBox box = (ComboBox)sender;
             if (box.Text != "")
             {

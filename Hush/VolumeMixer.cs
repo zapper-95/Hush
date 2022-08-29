@@ -4,6 +4,7 @@ using System.Threading;
 using CSCore.CoreAudioAPI;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Collections.Generic;
 
 namespace Hush
 {
@@ -79,6 +80,30 @@ namespace Hush
                 return 0;
             }
 
+        }
+
+        public static List<ProcessInfo>  GetProcessInfo()
+        {
+            using (var sessionManager = GetDefaultAudioSessionManager2(DataFlow.Render))
+            {
+                using (var sessionEnumerator = sessionManager.GetSessionEnumerator())
+                {
+                    List<ProcessInfo> processInfo = new List<ProcessInfo>();
+                    foreach (var session in sessionEnumerator)
+                    {
+                        using (var audioMeterInformation = session.QueryInterface<AudioMeterInformation>())
+                        {
+                            using (var session2 = session.QueryInterface<AudioSessionControl2>())
+                            {
+
+                                processInfo.Add(new ProcessInfo(session2.Process.Id, session2.Process.ProcessName));
+                            }
+                        }
+
+                    }
+                    return processInfo;
+                }
+            }
         }
 
 
