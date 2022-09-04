@@ -9,6 +9,7 @@ namespace Hush
 
     public partial class Form1 : Form
     {
+        VolumeMixer mixer;
         Thread controlMixThread = null;
         private ProcessInfo TargetProcess;
         private ProcessInfo SpeakerProcess;
@@ -26,6 +27,7 @@ namespace Hush
 
         public void RefreshProcesses()
         {
+            Console.WriteLine(Process.GetCurrentProcess().Threads.Count);
             processInfo.Clear();
             processInfo = VolumeMixer.GetProcessInfo();
 
@@ -44,6 +46,7 @@ namespace Hush
             SpeakerText = Speaker.Text;
             hush = true;
             controlMixThread = new Thread(ControlMixer);
+            controlMixThread.Name = "controlMixThread"; //thread so that the mixer can be controlled whilst the rest of the program is responsive
             controlMixThread.IsBackground = true;
             controlMixThread.Start();
 
@@ -54,28 +57,38 @@ namespace Hush
             int SpeakerID = 0, TargetID = 0;
             SpeakerID = SpeakerProcess.ID;
             TargetID = TargetProcess.ID;
-            float target_loud_volume = VolumeMixer.GetVolume(TargetID);
+
+            if(mixer!= null)
+            {
+                mixer.Dispose(); //dispose of the last mixer if it exists (can't achieve this destructor as .net framework            
+            }
+            mixer = new VolumeMixer(SpeakerID, TargetID);
+
             string oldMixerState = "";
+
+
+
+
             while (hush && SpeakerProcess != null && TargetProcess != null)
             {
-                //Console.WriteLine(target_loud_volume);
+                //    //Console.WriteLine(target_loud_volume);
 
 
 
-                string newMixerState = VolumeMixer.FindMixerState(SpeakerID, TargetID);
-
+                string newMixerState = mixer.FindMixerState();
 
                 if (oldMixerState != newMixerState) // we only want to fade if the state has changed
                 {
                     Thread.Sleep(inertia_period);
-                    if (VolumeMixer.FindMixerState(SpeakerID, TargetID) == newMixerState) //if it is the same state after the inertia period seconds fade
+                    if (mixer.FindMixerState() == newMixerState) //if it is the same state after the inertia period seconds fade
                     {
-                        if (thread != null && thread.IsAlive)
+                        if (thread != null)
                         {
                             thread.Abort();
                         }
-                        thread = new Thread(() => Fade(SpeakerID, TargetID, target_loud_volume, newMixerState));
+                        thread = new Thread(() => Fade(mixer, newMixerState)); //thread to fade in/out but also to check that the the state doesn't change as this happens
                         thread.IsBackground = true;
+                        thread.Name = "Fader";
                         thread.Start();
                         oldMixerState = newMixerState;
 
@@ -116,15 +129,16 @@ namespace Hush
 
 
 
-        private void Fade(int SpeakerID, int TargetID, float target_loud_volume, string newMixerState)
+        private void Fade(VolumeMixer mixer, string newMixerState)
         {
             if(newMixerState == "FadeIn")
             {
-                VolumeMixer.FadeIn(SpeakerID, TargetID, target_loud_volume);
+                //volu
+                mixer.FadeIn();
             }
             else if(newMixerState == "FadeOut")
             {
-                VolumeMixer.FadeOut(SpeakerID, TargetID);
+                mixer.FadeOut();
             }
         }
 

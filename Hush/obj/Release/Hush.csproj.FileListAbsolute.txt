@@ -1,0 +1,12 @@
+D:\Documents\Programming\Hush\Hush\Hush\bin\Release\Hush.exe.config
+D:\Documents\Programming\Hush\Hush\Hush\bin\Release\Hush.exe
+D:\Documents\Programming\Hush\Hush\Hush\bin\Release\Hush.pdb
+D:\Documents\Programming\Hush\Hush\Hush\bin\Release\CSCore.dll
+D:\Documents\Programming\Hush\Hush\Hush\obj\Release\Hush.csprojAssemblyReference.cache
+D:\Documents\Programming\Hush\Hush\Hush\obj\Release\Hush.Form1.resources
+D:\Documents\Programming\Hush\Hush\Hush\obj\Release\Hush.Properties.Resources.resources
+D:\Documents\Programming\Hush\Hush\Hush\obj\Release\Hush.csproj.GenerateResource.cache
+D:\Documents\Programming\Hush\Hush\Hush\obj\Release\Hush.csproj.CoreCompileInputs.cache
+D:\Documents\Programming\Hush\Hush\Hush\obj\Release\Hush.csproj.CopyComplete
+D:\Documents\Programming\Hush\Hush\Hush\obj\Release\Hush.exe
+D:\Documents\Programming\Hush\Hush\Hush\obj\Release\Hush.pdb

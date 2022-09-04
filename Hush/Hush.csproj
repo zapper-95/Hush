@@ -48,6 +48,7 @@
     <Reference Include="UIAutomationTypes" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AudioMonitor.cs" />
     <Compile Include="Class1.cs" />
     <Compile Include="ProcessInfo.cs" />
     <Compile Include="Form1.cs">

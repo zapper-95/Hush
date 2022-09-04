@@ -9,44 +9,43 @@ using System.Collections.Generic;
 namespace Hush
 {
 
-    static class VolumeMixer
+    class VolumeMixer:IDisposable
     {
+
         //https://stackoverflow.com/questions/27297577/get-processname-or-id-from-cscore-audiostream
         //https://stackoverflow.com/questions/21200825/getting-individual-windows-application-current-volume-output-level-as-visualized
         // https://github.com/filoe/cscore/blob/master/CSCore.Test/CoreAudioAPI/AudioSessionTests.cs
-        private static double threshold_noise = 0.00001;
-        public static bool ProcessPlayingAudio(int pID)
+        int speakerID;
+        int targetID;
+        float target_loud_volume;
+        AudioMonitor speakerMonitor;
+        AudioMonitor targetMonitor;
+        public VolumeMixer(int speakerID, int targetID)
         {
-            using (var sessionManager = GetDefaultAudioSessionManager2(DataFlow.Render))
-            {
-                using (var sessionEnumerator = sessionManager.GetSessionEnumerator())
-                {
-                    foreach (var session in sessionEnumerator)
-                    {
-                        using (var audioMeterInformation = session.QueryInterface<AudioMeterInformation>())
-                        {
-                            using (var session2 = session.QueryInterface<AudioSessionControl2>())
-                            {
-                                //Debug.WriteLine(session2.Process.ProcessName);
-                                if(pID == session2.ProcessID)
-                                {
-                                    //Debug.WriteLine(audioMeterInformation.GetPeakValue());
-                                    if((double)audioMeterInformation.GetPeakValue() > threshold_noise)
-                                    {
-                                        return true;
-                                    }
-                                    return false;
-                                }
-                            }
-                        }
-                    }
-                }
-                return false;
-            }
 
+            this.speakerID = speakerID;
+            this.targetID = targetID;
+            speakerMonitor = new AudioMonitor(speakerID);
+
+            targetMonitor = new AudioMonitor(targetID);
+            target_loud_volume = GetVolume(targetID);
         }
 
-        public static float GetVolume(int pID)
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                speakerMonitor.Dispose();
+                targetMonitor.Dispose();
+            }
+        }
+        public static float GetVolume(int pID) //static method to get a volume of a particular process
         {
             using (var sessionManager = GetDefaultAudioSessionManager2(DataFlow.Render))
             {
@@ -65,12 +64,11 @@ namespace Hush
                                     //Debug.WriteLine(audioMeterInformation.);
                                     using (var simpleVolume = session.QueryInterface<SimpleAudioVolume>())
                                     {
-
                                         float volume = simpleVolume.MasterVolume;
                                         return volume;
 
                                     }
-                                    
+
                                 }
                             }
                         }
@@ -81,7 +79,7 @@ namespace Hush
 
         }
 
-        public static List<ProcessInfo>  GetProcessInfo()
+        public static List<ProcessInfo> GetProcessInfo() //static method to get all the audio processes
         {
             using (var sessionManager = GetDefaultAudioSessionManager2(DataFlow.Render))
             {
@@ -106,7 +104,7 @@ namespace Hush
         }
 
 
-        public static void ChangeVolume(int pID, float volume_change)
+        private void ChangeVolume(int pID, float volume_change) //privately changes the volume of an audio process
         {
             using (var sessionManager = GetDefaultAudioSessionManager2(DataFlow.Render))
             {
@@ -130,28 +128,28 @@ namespace Hush
                                         {
                                             simpleVolume.MasterVolume = 0;
                                         }
-                                        else if(newVolume > 1)
+                                        else if (newVolume > 1)
                                         {
-                                            simpleVolume.MasterVolume = 100;
+                                            simpleVolume.MasterVolume = 1;
                                         }
-                                        else 
+                                        else
                                         {
                                             simpleVolume.MasterVolume = newVolume;
                                         }
-                                        
+
 
                                     }
                                 }
                             }
                         }
-                       
-                       
+
+
                     }
                 }
             }
         }
 
-        private static AudioSessionManager2 GetDefaultAudioSessionManager2(DataFlow dataFlow)
+        private static AudioSessionManager2 GetDefaultAudioSessionManager2(DataFlow dataFlow) //audio manager method that is required to get the volume, change the volume and get audio processes
         {
             using (var enumerator = new MMDeviceEnumerator())
             {
@@ -164,17 +162,17 @@ namespace Hush
         }
 
 
-        public static string FindMixerState(int speakerID, int targetID)
+        public string FindMixerState()
         {
             string mixState = "";
 
-            bool speakerOn = ProcessPlayingAudio(speakerID);
-            bool targetOn = ProcessPlayingAudio(targetID);
+            bool speakerOn = speakerMonitor.IsPlaying();
+            bool targetOn = targetMonitor.IsPlaying();
 
 
             if (speakerOn && targetOn)
             {
-                mixState =  "FadeOut";
+                mixState = "FadeOut";
             }
             else if (!speakerOn && targetOn)
             {
@@ -185,7 +183,7 @@ namespace Hush
 
 
 
-        public static void FadeOut(int SpeakerID, int TargetID) //method to reduce volume exponentially
+        public void FadeOut() //method to reduce volume exponentially
         {
             /*
                                                             ----- EXPLANATION -----
@@ -221,13 +219,13 @@ namespace Hush
             int t = 4;
 
 
-            float tvr = GetVolume(TargetID) * 100; //easier to work with values 0 to 100 and r values look nicer
+            float tvr = GetVolume(targetID) * 100; //easier to work with values 0 to 100 and r values look nicer
 
 
 
             //derrive N
             int N = (int)Math.Floor((Math.Log(r - tvr * (1 - r)) / Math.Log(r)) - 1);
-            if(N != 0)
+            if (N != 0)
             {
                 //Console.WriteLine("n " + N);
                 //derrive alpha
@@ -240,7 +238,7 @@ namespace Hush
                 {
                     Thread.Sleep((int)Math.Round(alpha * 1000));
                     float current_reduction = -(float)Math.Pow(r, i) / 100; //return values back between 1 and 0 for actual reduction
-                    ChangeVolume(TargetID, current_reduction);
+                    ChangeVolume(targetID, current_reduction);
 
 
 
@@ -253,7 +251,7 @@ namespace Hush
         }
 
 
-        public static void FadeIn(int SpeakerID, int TargetID, float target_loud_volume) //method to reduce volume exponentially
+        public void FadeIn() //method to reduce volume exponentially
         {
             /*
                                                             ----- EXPLANATION -----
@@ -288,9 +286,9 @@ namespace Hush
 
 
 
-            if (GetVolume(TargetID) < target_loud_volume) //only increase the volume if it is less than what the volume was fading it out
+            if (GetVolume(targetID) < target_loud_volume) //only increase the volume if it is less than what the volume was fading it out
             {
-                float tv = target_loud_volume - GetVolume(TargetID);
+                float tv = target_loud_volume - GetVolume(targetID);
                 //derrive N
                 tv *= 100;
                 int N = (int)Math.Round((Math.Log(r - tv * (1 - r)) / Math.Log(r)) - 1);
@@ -306,7 +304,7 @@ namespace Hush
                     {
                         Thread.Sleep((int)Math.Round(alpha * (decimal)Math.Pow(10, 3)));
                         float current_increase = (float)Math.Pow(r, i) / 100;
-                        ChangeVolume(TargetID, current_increase);
+                        ChangeVolume(targetID, current_increase);
                     }
                 }
 
